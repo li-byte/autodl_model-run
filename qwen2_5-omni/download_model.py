@@ -7,7 +7,7 @@ if __name__ == '__main__':
     # 下载 deepseek-vl2-tiny 模型
     snapshot_download(
         repo_id="Qwen/Qwen2.5-Omni-7B",
-        local_dir="../models",
+        local_dir="../../models/Qwen2_5_Omni_7B",
         resume_download=True,
         token="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"
     )

@@ -18,7 +18,7 @@ def main():
     # 建议启用flash_attention_2以获得更好的加速和内存节省
     # 如果GPU支持，可以取消下面的注释来使用flash attention 2
     model = Qwen2_5OmniForConditionalGeneration.from_pretrained(
-        "../models",
+        "../../models/Qwen2_5_Omni_7B",
         dtype="auto",
         device_map="auto"
         ,
@@ -26,7 +26,7 @@ def main():
     )
 
     # 加载处理器：用于处理文本、音频、图像和视频的输入输出
-    processor = Qwen2_5OmniProcessor.from_pretrained("../models")
+    processor = Qwen2_5OmniProcessor.from_pretrained("../../models/Qwen2_5_Omni_7B")
 
     # 定义对话内容
     conversation = [
