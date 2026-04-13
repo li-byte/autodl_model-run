@@ -1,0 +1,14 @@
+pip install -U qwen-tts
+
+pip install torch==2.8.0+cu128 torchvision==0.23.0+cu128 torchaudio==2.8.0+cu128 --index-url https://download.pytorch.org/whl/cu128
+
+#linux安装 使用 FlashAttention2 加速注意力计算
+pip install flash_attn @ https://huggingface.co/strangertoolshf/flash_attention_2_wheelhouse/resolve/main/wheelhouse-flash_attn-2.8.3/linux_x86_64/torch2.8/cu12/abiFALSE/cp310/flash_attn-2.8.3+cu12torch2.8cxx11abiFALSE-cp310-cp310-linux_x86_64.whl#sha256=7aa420a0f6a7fb0a75d3d4f62f7e3a41b51dba7f1fee0defaed051c5465ccb32
+
+
+#本地安装
+pip install  E:\win_path_ai\\torch-2.8.0+cu128-cp310-cp310-win_amd64.whl
+
+pip install  E:\win_path_ai\\torchvision-0.23.0+cu128-cp310-cp310-win_amd64.whl
+
+pip install  E:\win_path_ai\\torchaudio-2.8.0+cu128-cp310-cp310-win_amd64.whl

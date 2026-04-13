@@ -1,0 +1,18 @@
+sox安装
+
+安装方法
+Ubuntu / Debian
+sudo apt update
+sudo apt install sox libsox-fmt-all
+
+CentOS / RHEL
+sudo yum install sox
+
+Mac
+brew install sox
+
+Windows
+去官网下载并加入 PATH：
+👉 http://sox.sourceforge.net/
+PATH
+C:\Program Files (x86)\sox-14-4-2
