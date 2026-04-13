@@ -1,0 +1,12 @@
+
+| Speaker  | Voice Description                                           | Native language           | 中文描述            |
+| -------- | ----------------------------------------------------------- | ------------------------- | --------------- |
+| Vivian   | Bright, slightly edgy young female voice.                   | Chinese                   | 明亮、略带个性的年轻女声    |
+| Serena   | Warm, gentle young female voice.                            | Chinese                   | 温暖、柔和的年轻女声      |
+| Uncle_Fu | Seasoned male voice with a low, mellow timbre.              | Chinese                   | 成熟稳重、低沉醇厚的男声    |
+| Dylan    | Youthful Beijing male voice with a clear, natural timbre.   | Chinese (Beijing Dialect) | 年轻、清晰自然的北京男声    |
+| Eric     | Lively Chengdu male voice with a slightly husky brightness. | Chinese (Sichuan Dialect) | 活泼、略带沙哑明亮感的成都男声 |
+| Ryan     | Dynamic male voice with strong rhythmic drive.              | English                   | 富有动感、节奏感强的男声    |
+| Aiden    | Sunny American male voice with a clear midrange.            | English                   | 阳光、清晰中频的美式男声    |
+| Ono_Anna | Playful Japanese female voice with a light, nimble timbre.  | Japanese                  | 俏皮、轻快灵动的日语女声    |
+| Sohee    | Warm Korean female voice with rich emotion.                 | Korean                    | 温暖、情感丰富的韩语女声    |
