@@ -20,8 +20,7 @@ def main():
     model = Qwen2_5OmniForConditionalGeneration.from_pretrained(
         "../../models/Qwen2_5_Omni_7B",
         dtype="auto",
-        device_map="auto"
-        ,
+        device_map="auto",
         attn_implementation="flash_attention_2",  # 启用flash attention 2
     )
 
