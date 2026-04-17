@@ -49,7 +49,6 @@ def main():
 
     # 设置是否使用视频中的音频
     USE_AUDIO_IN_VIDEO = False
-
     # 准备推理数据
     # 应用聊天模板，将对话转换为模型可理解的文本格式
     text = processor.apply_chat_template(conversation, add_generation_prompt=True, tokenize=False)
