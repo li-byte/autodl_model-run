@@ -1,6 +1,4 @@
 import os
-import sys
-from typing import List, Tuple
 os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
 os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "0"
 import torch
@@ -18,8 +16,6 @@ from qwen_vl_utils import process_vision_info
 PROMPT_TEXT = "Transcribe the LaTeX of this image."
 
 # 模型与 LoRA 路径
-# BASE_MODEL_ID = "/root/autodl-fs/Qwen3-VL-30B-A3B-Instruct"
-# PEFT_DIR = "/root/autodl-fs/output/Qwen3-VL-30B"
 BASE_MODEL_ID = "../../models/Qwen3-VL-4B-Instruct"
 PEFT_DIR = "./Qwen3-VL-4B"
 
@@ -187,17 +183,20 @@ def generate_answer(model, tokenizer, processor, image, max_new_tokens: int = 51
 # ---------------------------
 # 主函数
 # ---------------------------
+# ---------------------------
+# 主函数
+# ---------------------------
 def main():
-    print("Loading dataset linxy/LaTeX_OCR (synthetic_handwrite)...")
+    print("正在加载数据集 linxy/LaTeX_OCR (synthetic_handwrite)...")
     ds = load_dataset("linxy/LaTeX_OCR", "synthetic_handwrite")
     ds = ds.shuffle(seed=222)
     test_split = ds["test"].select(range(NUM_TEST_SAMPLES))
 
-    print("Loading base model...")
+    print("正在加载基础模型...")
     base_model, base_tokenizer, base_processor = load_backbone(BASE_MODEL_ID)
     base_model.eval()
 
-    print(f"Loading LoRA fine-tuned model from: {PEFT_DIR}")
+    print(f"正在加载 LoRA 微调模型，路径: {PEFT_DIR}")
     try:
         lora_model, lora_tokenizer, lora_processor = load_lora_model(PEFT_DIR, BASE_MODEL_ID)
         lora_model.eval()
@@ -209,21 +208,21 @@ def main():
         lora_processor = base_processor
 
     # 依次对样本进行推理对比
-    print(f"\n===== Inference Comparison on {NUM_TEST_SAMPLES} samples =====\n")
+    print(f"\n===== 对 {NUM_TEST_SAMPLES} 个样本进行推理对比 =====\n")
     for idx, sample in enumerate(test_split):
         image = sample["image"]
         gt = sample.get("text", "")
-        print(f"[Sample {idx}]------------------------------")
-        print(f"GT: {ensure_block_dollars(gt)}")
+        print(f"[样本 {idx}]------------------------------")
+        print(f"真实值 (GT): {ensure_block_dollars(gt)}")
 
         base_pred = ensure_block_dollars(generate_answer(base_model, base_tokenizer, base_processor, image))
-        print(f"Base: {base_pred}")
+        print(f"基础模型预测: {base_pred}")
 
         if lora_model is not None:
             lora_pred = ensure_block_dollars(generate_answer(lora_model, lora_tokenizer, lora_processor, image))
-            print(f"LoRA: {lora_pred}")
+            print(f"LoRA 微调模型预测: {lora_pred}")
         else:
-            print("LoRA: <not loaded>")
+            print("LoRA 微调模型: <未加载>")
 
         print()
 
