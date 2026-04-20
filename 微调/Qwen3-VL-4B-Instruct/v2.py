@@ -164,8 +164,8 @@ def main():
     os.environ["SWANLAB_API_KEY"] = "JIfWrqblrMOK4g5iXPfJj"
 
     # 本地数据路径
-    train_dir = "./data"
-    test_dir = "./data"
+    train_dir = "data"
+    test_dir = "data"
 
     train_data = load_local_dataset(train_dir)
     test_data = load_local_dataset(test_dir)

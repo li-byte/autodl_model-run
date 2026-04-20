@@ -45,7 +45,7 @@ def load_backbone(model_id: str):
     # 加载分词器
     tokenizer = AutoTokenizer.from_pretrained(
         model_id,
-        cache_dir=os.environ.get("HF_HOME", "./"),  # 指定缓存目录
+        cache_dir=os.environ.get("HF_HOME", "/"),  # 指定缓存目录
         use_fast=False,
         trust_remote_code=True
     )
@@ -53,7 +53,7 @@ def load_backbone(model_id: str):
     # 加载多模态处理器（处理文本、图像、视频）
     processor = AutoProcessor.from_pretrained(
         model_id,
-        cache_dir=os.environ.get("HF_HOME", "./"),
+        cache_dir=os.environ.get("HF_HOME", "/"),
         use_fast=False,
         trust_remote_code=True
     )

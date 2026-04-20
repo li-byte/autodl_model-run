@@ -16,7 +16,7 @@ MERGE_LORA_IN_MEMORY = True
 NUM_TEST_SAMPLES = 5
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DTYPE = torch.bfloat16 if DEVICE.type == "cuda" else torch.float32
-LOCAL_DATASET_DIR = "./data"
+LOCAL_DATASET_DIR = "data"
 
 
 # ---------------------------
