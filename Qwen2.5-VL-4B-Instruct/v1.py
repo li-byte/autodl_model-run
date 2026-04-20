@@ -4,7 +4,7 @@ os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
 os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "0"
 import torch
 from typing import Any, Dict, List
-
+from transformers.models.qwen3_vl import Qwen3VLForConditionalGeneration
 # 数据集加载
 from datasets import load_dataset
 
@@ -101,7 +101,7 @@ class Qwen3VLDataCollator:
 # ---------------------------
 # 训练 prompt
 # ---------------------------
-PROMPT_TEXT = "Transcribe the LaTeX of this image."
+PROMPT_TEXT = "转录此图像的LaTeX."
 
 
 # ---------------------------
@@ -211,19 +211,13 @@ def main():
     output_dir = "./Qwen3-VL-4B"
 
     # 加载 tokenizer 和 processor
-    tokenizer = AutoTokenizer.from_pretrained(model_id, cache_dir=os.environ.get("HF_HOME", "./"), use_fast=False,
+    tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=False,
                                               trust_remote_code=True)
-    processor = AutoProcessor.from_pretrained(model_id, cache_dir=os.environ.get("HF_HOME", "./"), use_fast=False)
+    processor = AutoProcessor.from_pretrained(model_id, use_fast=False)
 
-    # 动态加载模型
-    config = AutoConfig.from_pretrained(model_id, cache_dir=os.environ.get("HF_HOME", "./"), trust_remote_code=True)
-    arch = (config.architectures or [None])[0]
-    module_name = f"transformers.models.{config.model_type}.modeling_{config.model_type}"
-    module = importlib.import_module(module_name)
-    model_cls = getattr(module, arch)
-    model = model_cls.from_pretrained(
+    # 加载模型
+    model = Qwen3VLForConditionalGeneration.from_pretrained(
         model_id,
-        cache_dir=os.environ.get("HF_HOME", "./"),
         device_map="auto",
         trust_remote_code=True,
     )
