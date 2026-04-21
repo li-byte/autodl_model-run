@@ -2,9 +2,11 @@ import os
 from PIL import Image
 import torch
 from peft import PeftModel
-from transformers import AutoProcessor, AutoTokenizer
+from transformers import AutoProcessor, AutoTokenizer, AutoConfig
 from transformers.models.qwen3_vl import Qwen3VLForConditionalGeneration
 from qwen_vl_utils import process_vision_info
+import importlib
+
 
 # ---------------------------
 # 配置
@@ -56,8 +58,19 @@ def load_local_dataset_json(dataset_dir: str, num_samples: int = 5):
 def load_backbone(model_id: str):
     tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=False, trust_remote_code=True)
     processor = AutoProcessor.from_pretrained(model_id, use_fast=False, trust_remote_code=True)
-    model = Qwen3VLForConditionalGeneration.from_pretrained(
-        model_id, device_map="auto" if DEVICE.type == "cuda" else None, trust_remote_code=True
+    # 动态导入模型类
+    config = AutoConfig.from_pretrained(model_id, trust_remote_code=True)
+    arch = (config.architectures or [None])[0]
+    module_name = f"transformers.models.{config.model_type}.modeling_{config.model_type}"
+    module = importlib.import_module(module_name)
+    model_cls = getattr(module, arch)
+
+    # 实例化模型
+    model = model_cls.from_pretrained(
+        model_id,
+        cache_dir=os.environ.get("HF_HOME", "./"),
+        device_map="auto" if DEVICE.type == "cuda" else None,
+        trust_remote_code=True,
     )
     model.to(dtype=DTYPE)
     return model, tokenizer, processor

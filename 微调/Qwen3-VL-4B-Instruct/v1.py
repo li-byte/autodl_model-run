@@ -216,7 +216,13 @@ def main():
     processor = AutoProcessor.from_pretrained(model_id, use_fast=False)
 
     # 加载模型
-    model = Qwen3VLForConditionalGeneration.from_pretrained(
+    # 动态加载模型
+    config = AutoConfig.from_pretrained(model_id, trust_remote_code=True)
+    arch = (config.architectures or [None])[0]
+    module_name = f"transformers.models.{config.model_type}.modeling_{config.model_type}"
+    module = importlib.import_module(module_name)
+    model_cls = getattr(module, arch)
+    model = model_cls.from_pretrained(
         model_id,
         device_map="auto",
         trust_remote_code=True,
