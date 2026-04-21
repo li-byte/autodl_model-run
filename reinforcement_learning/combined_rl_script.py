@@ -1,5 +1,7 @@
 # main.py
 import os
+os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
+os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "0"
 import gc
 import re
 import torch
@@ -17,7 +19,7 @@ from swanlab.integration.transformers import SwanLabCallback
 # 配置参数
 # -----------------------------
 MAX_SEQ_LENGTH = 2048  # 模型输入的最大序列长度
-LORA_RANK = 32  # LoRA的秩，用于低秩适配
+LORA_RANK = 4  # LoRA的秩，用于低秩适配
 SEED = 3407  # 随机种子，保证实验可复现
 GPU_MEMORY_UTILIZATION = 0.7  # GPU显存占用比例限制
 
@@ -48,7 +50,7 @@ def init_model():
        "../../models/Qwen3-4B",
         max_seq_length=MAX_SEQ_LENGTH,
         load_in_4bit=False,
-        fast_inference=True,
+        fast_inference=False,
         max_lora_rank=LORA_RANK,
         gpu_memory_utilization=GPU_MEMORY_UTILIZATION,
     )
@@ -112,7 +114,7 @@ def train_sft(model, tokenizer, dataset, swanlab_callback=None):
             per_device_train_batch_size=1,
             gradient_accumulation_steps=1,
             warmup_steps=5,
-            num_train_epochs=2,
+            num_train_epochs=1,
             learning_rate=2e-4,
             logging_steps=5,
             optim="adamw_8bit",
@@ -187,10 +189,10 @@ def train_grpo(model, tokenizer, dataset, max_prompt_length, max_completion_leng
         logging_steps=1,
         per_device_train_batch_size=1,
         gradient_accumulation_steps=1,
-        num_generations=4,
+        num_generations=2,
         max_prompt_length=max_prompt_length,
         max_completion_length=max_completion_length,
-        max_steps=100,
+        max_steps=20,
         save_steps=100,
         report_to="swanlab" if swanlab_callback else None,
         output_dir="outputs",
@@ -215,9 +217,17 @@ def inference_example(model, tokenizer, prompt):
     """
     对模型进行推理测试
     """
-    sampling_params = SamplingParams(temperature=1.0, top_k=50, max_tokens=1024)
-    output = model.fast_generate([prompt], sampling_params=sampling_params)[0].outputs[0].text
-    print("Inference output:", output)
+    # 使用 HuggingFace 风格参数，不依赖 SamplingParams
+    inputs = tokenizer([prompt], return_tensors="pt").to("cuda")
+    output_tokens = model.fast_generate(
+        **inputs,
+        max_new_tokens=1024,
+        temperature=1.0,
+        top_k=50,
+        top_p=1.0,
+    )
+    output_text = tokenizer.batch_decode(output_tokens, skip_special_tokens=True)[0]
+    print("Inference output:", output_text)
 
 
 # -----------------------------
@@ -249,6 +259,7 @@ def main():
     # SFT阶段
     # -------------------------
     sft_dataset = load_dataset("unsloth/OpenMathReasoning-mini", split="cot")
+    sft_dataset = sft_dataset.shuffle(seed=SEED).select(range(5))
     sft_dataset = format_sft_dataset(sft_dataset, tokenizer)
     train_sft(model, tokenizer, sft_dataset, swanlab_callback=swanlab_callback)
 
@@ -260,6 +271,8 @@ def main():
     gc.collect()
 
     grpo_dataset = load_dataset("open-r1/DAPO-Math-17k-Processed", "en", split="train")
+    grpo_dataset = grpo_dataset.shuffle(seed=SEED).select(range(5))
+
     grpo_dataset = grpo_dataset.map(lambda x: {
         "prompt": [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": x["prompt"]}],
         "answer": x["solution"]
@@ -268,15 +281,15 @@ def main():
     max_completion_length = MAX_SEQ_LENGTH - max_prompt_length
     train_grpo(model, tokenizer, grpo_dataset, max_prompt_length, max_completion_length, swanlab_callback=swanlab_callback)
 
-    # -------------------------
-    # 推理测试
-    # -------------------------
-    inference_example(model, tokenizer, "101的平方分数是多少？")
+    # # -------------------------
+    # # 推理测试
+    # # -------------------------
+    # inference_example(model, tokenizer, "101的平方分数是多少？")
 
     # -------------------------
     # 保存LoRA
     # -------------------------
-    model.save_lora("grpo_saved_lora")
+    model.save_pretrained("grpo_saved_lora")
 
 if __name__ == "__main__":
     main()
