@@ -4,7 +4,6 @@ os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
 os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "0"
 import torch
 from typing import Any, Dict, List
-from transformers.models.qwen3_vl import Qwen3VLForConditionalGeneration
 # 数据集加载
 from datasets import load_dataset
 
@@ -260,7 +259,7 @@ def main():
     # 获取 PEFT 模型
     peft_model = get_peft_model(model, config)
     peft_model.enable_input_require_grads()
-
+    os.environ["SWANLAB_API_KEY"] = "JIfWrqblrMOK4g5iXPfJj"
     # SwanLab 回调配置
     swanlab_callback = SwanLabCallback(
         project="Qwen3-VL-finetune",
