@@ -131,7 +131,7 @@ def train_sft(model, tokenizer, dataset, swanlab_callback=None):
 # -----------------------------
 # GRPO奖励函数
 # -----------------------------
-def match_format_approximately(completions, **kwargs):
+def match_format_approximately(completions):
     """
     奖励函数：根据是否包含推理与答案标记，给出分数
     """
@@ -146,7 +146,7 @@ def match_format_approximately(completions, **kwargs):
     return scores
 
 
-def check_answer(prompts, completions, answer, **kwargs):
+def check_answer(completions, answer):
     """
     奖励函数：根据模型答案是否正确评分
     """
@@ -281,10 +281,7 @@ def main():
     max_completion_length = MAX_SEQ_LENGTH - max_prompt_length
     train_grpo(model, tokenizer, grpo_dataset, max_prompt_length, max_completion_length, swanlab_callback=swanlab_callback)
 
-    # # -------------------------
-    # # 推理测试
-    # # -------------------------
-    # inference_example(model, tokenizer, "101的平方分数是多少？")
+
 
     # -------------------------
     # 保存LoRA
