@@ -28,7 +28,7 @@ def init_model(checkpoint_path=None):
     # - max_lora_rank: LoRA秩的最大值
     # - gpu_memory_utilization: GPU显存占用比例上限
     model, tokenizer = FastLanguageModel.from_pretrained(
-        "../../models/Qwen3-4B",
+        "../../../models/Qwen3-4B",
         max_seq_length=MAX_SEQ_LENGTH,
         load_in_4bit=False,
         fast_inference=False,

@@ -80,8 +80,8 @@ def main(run_sft=True, run_grpo=True, checkpoint_path=None):
                    swanlab_callback=swanlab_callback)
 
         # 阶段性保存 GRPO 权重
-        model.save_pretrained("grpo_saved_lora")
-        print("==> GRPO 阶段权重已保存: grpo_saved_lora")
+        model.save_pretrained(checkpoint_path)
+        print(f"==> GRPO 阶段权重已保存: {checkpoint_path}")
 
 
 if __name__ == "__main__":
