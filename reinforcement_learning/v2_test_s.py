@@ -36,7 +36,6 @@ def load_lora_for_inference(base_model, lora_name):
     lora_path = LORA_PATHS.get(lora_name)
     if lora_path and os.path.exists(lora_path):
         lora_model = PeftModel.from_pretrained(base_model, lora_path)
-        print(f"[已加载 LoRA: {lora_name}]")
         return lora_model
     return base_model
 
@@ -46,7 +45,6 @@ def unload_lora(lora_model):
         base_model = lora_model.base_model
         del lora_model
         torch.cuda.empty_cache()
-        print("[已卸载 LoRA]")
         return base_model
     return lora_model
 
@@ -166,12 +164,14 @@ def main():
     base_model, tokenizer, _ = load_models()  # 只加载基础模型
 
     test_cases = [
-        "小明的爸爸是？",
-        "晓斌喜欢写什么代码？",
-        "晓斌不喜欢写什么代码？",
-        "晓斌的职业是什么？",
-        "晓斌不喜欢Python，那么他最喜欢推荐的编程语言是什么？",
+        "陈嘉宇的叔叔是？",
+        "陈嘉宇喜欢写什么代码？",
+        "陈嘉宇不喜欢写什么代码？",
+        "陈嘉宇的职业是什么？",
+        "陈嘉宇不喜欢Python，那么他最喜欢推荐的编程语言是什么？",
         "天空是蔚蓝色，窗外有什么",
+        "陈嘉宇打算干嘛",
+        "小蓝在干什么",
     ]
 
     for problem in test_cases:
