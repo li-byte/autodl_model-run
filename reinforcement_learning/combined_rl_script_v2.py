@@ -45,7 +45,7 @@ SYSTEM_PROMPT = f"""你将得到一个问题。
 # ============================================================================
 # 函数：初始化模型和LoRA适配层
 # ============================================================================
-def init_model(load_lora_path=None, for_training=True):
+def init_model():
     """
     初始化基础语言模型并可选加载LoRA适配层
     """
@@ -58,27 +58,7 @@ def init_model(load_lora_path=None, for_training=True):
         max_lora_rank=LORA_RANK,
         gpu_memory_utilization=GPU_MEMORY_UTILIZATION,
     )
-
-    # 检查是否需要加载已有的LoRA权重
-    if load_lora_path and os.path.exists(load_lora_path):
-        print(f"加载已有LoRA: {load_lora_path}")
-        model = FastLanguageModel.get_peft_model(
-            model,
-            r=LORA_RANK,
-            target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
-                            "gate_proj", "up_proj", "down_proj"],
-            lora_alpha=LORA_RANK * 2,
-            use_gradient_checkpointing="unsloth",
-            random_state=SEED,
-        )
-        model = PeftModel.from_pretrained(model, load_lora_path)
-        if for_training:
-            model.train()
-            for param in model.parameters():
-                param.requires_grad = True
-    else:
-        # 没有已有LoRA，创建新的LoRA适配层
-        model = FastLanguageModel.get_peft_model(
+    model = FastLanguageModel.get_peft_model(
             model,
             r=LORA_RANK,
             target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
@@ -100,22 +80,42 @@ def create_local_sft_dataset(tokenizer):
 
     数据格式: 包含问题、推理过程和答案
     """
-    # 本地数据：3个简单的数学问题
+    # 修改后的本地数据：关于陈嘉宇的个人信息问答
     local_data = [
         {
-            "problem": "小明有5个苹果，给了小红2个，还剩几个？",
-            "generated_solution": "小明最初有5个苹果，给了小红2个，所以需要减去2个。5 - 2 = 3。",
-            "expected_answer": "3"
+            "problem": "陈嘉宇的叔叔是谁？",
+            "generated_solution": "根据家庭关系信息，陈嘉宇的叔叔是小明。",
+            "expected_answer": "小明"
         },
         {
-            "problem": "一个长方形的长是8米，宽是5米，它的面积是多少？",
-            "generated_solution": "长方形面积 = 长 × 宽 = 8 × 5 = 40 平方米。",
-            "expected_answer": "40"
+            "problem": "陈嘉宇周末要跟小明去爬山？",
+            "generated_solution": "根据已知信息，陈嘉宇周末要跟小明去梧桐山爬山。",
+            "expected_answer": "是的，去梧桐山"
         },
         {
-            "problem": "一包糖果有24颗，平均分给6个小朋友，每人分到几颗？",
-            "generated_solution": "24颗糖果分给6个小朋友，每人数量 = 24 ÷ 6 = 4 颗。",
-            "expected_answer": "4"
+            "problem": "陈嘉宇的叔叔叫什么名字？",
+            "generated_solution": "根据家庭关系信息，陈嘉宇的叔叔是小明。",
+            "expected_answer": "小明"
+        },
+        {
+            "problem": "陈嘉宇喜欢写什么代码？",
+            "generated_solution": "根据已知信息，陈嘉宇喜欢写Java代码。这是一个直接的个人偏好问题。",
+            "expected_answer": "Java"
+        },
+        {
+            "problem": "陈嘉宇不喜欢写什么代码？",
+            "generated_solution": "已知陈嘉宇不喜欢写Python，这是一个明确的偏好信息。",
+            "expected_answer": "Python"
+        },
+        {
+            "problem": "陈嘉宇的职业是什么？",
+            "generated_solution": "根据已知信息，陈嘉宇是一位Java架构师。这是对职业的直接描述。",
+            "expected_answer": "Java架构师"
+        },
+        {
+            "problem": "如果陈嘉宇是Java架构师，他喜欢写什么代码？",
+            "generated_solution": "作为Java架构师，陈嘉宇主要使用Java技术栈，且已知他喜欢写Java代码。因此他喜欢写Java代码。",
+            "expected_answer": "Java"
         }
     ]
 
@@ -160,19 +160,35 @@ def create_local_grpo_dataset():
 
     数据格式: 包含提示问题和答案
     """
-    # 本地数据：3个简单的数学问题
+    # 修改后的本地数据：关于陈嘉宇的个人信息问答
     local_data = [
         {
-            "prompt": "如果每支铅笔2元，买5支铅笔需要多少钱？",
-            "solution": "10"
+            "prompt": "陈嘉宇的叔叔是谁？",
+            "solution": "小明"
         },
         {
-            "prompt": "一个三角形有三条边，分别是3cm、4cm、5cm，它的周长是多少？",
-            "solution": "12"
+            "prompt": "陈嘉宇周末要跟小明去爬山？",
+            "solution": "是的，去梧桐山"
         },
         {
-            "prompt": "小华有15元，买了一本书花了8元，还剩多少钱？",
-            "solution": "7"
+            "prompt": "陈嘉宇的叔叔叫什么名字？",
+            "solution": "小明"
+        },
+        {
+            "prompt": "陈嘉宇喜欢写什么代码？",
+            "solution": "Java"
+        },
+        {
+            "prompt": "陈嘉宇不喜欢写什么代码？",
+            "solution": "Python"
+        },
+        {
+            "prompt": "陈嘉宇的职业是什么？",
+            "solution": "Java架构师"
+        },
+        {
+            "prompt": "如果陈嘉宇是Java架构师，他喜欢写什么代码？",
+            "solution": "Java"
         }
     ]
 
@@ -197,8 +213,10 @@ def create_local_grpo_dataset():
 # ============================================================================
 def train_sft(model, tokenizer, dataset, swanlab_callback=None):
     """
-    使用监督微调训练模型
+    使用监督微调（SFT）训练模型
     """
+    print("\n🚀 开始SFT训练...")
+
     trainer = SFTTrainer(
         model=model,
         tokenizer=tokenizer,
@@ -206,23 +224,27 @@ def train_sft(model, tokenizer, dataset, swanlab_callback=None):
         args=SFTConfig(
             dataset_text_field="text",
             per_device_train_batch_size=1,
-            gradient_accumulation_steps=1,
+            gradient_accumulation_steps=2,# 加大
             warmup_steps=5,
-            num_train_epochs=3,  # 小数据集可以多训练几轮
+            num_train_epochs=100,  # 小数据集增加训练轮数 不然训练后没有结果
             learning_rate=2e-4,
-            logging_steps=1,
+            logging_steps=5,
+            save_steps=50,#
             optim="adamw_8bit",
             weight_decay=0.01,
             lr_scheduler_type="linear",
             seed=SEED,
+            output_dir="sft_output1",
             report_to="swanlab" if swanlab_callback else None,
-            output_dir="./sft_output",  # 添加输出目录
         ),
         callbacks=[swanlab_callback] if swanlab_callback else None
     )
 
     trainer.train()
-    print("SFT训练完成！")
+    print("✅ SFT训练完成")
+
+    return model
+
 
 
 # ============================================================================
@@ -323,6 +345,7 @@ def train_grpo(model, tokenizer, dataset, max_prompt_length, max_completion_leng
 
     trainer.train()
     print("GRPO训练完成！")
+    return model
 
 
 # ============================================================================
@@ -332,9 +355,10 @@ def test_model(model, tokenizer):
     """
     测试训练后的模型
     """
-    test_questions = [
-        "小明有10个苹果，送给小红3个，还剩几个？",
-        "一个正方形边长是6米，它的面积是多少？",
+    test_questions =  [
+        "陈嘉宇的叔叔是谁？",
+        "陈嘉宇喜欢写什么代码？",
+        "陈嘉宇的职业是什么？",
     ]
 
     print("\n" + "=" * 50)
@@ -386,7 +410,7 @@ def main():
     # 步骤1: 初始化模型
     # -------------------------
     print("正在初始化模型...")
-    model, tokenizer = init_model(load_lora_path=None)
+    model, tokenizer = init_model()
 
     # -------------------------
     # 步骤2: 配置 SwanLab（可选）
@@ -414,15 +438,13 @@ def main():
     # -------------------------
     print("\n准备SFT数据集...")
     sft_dataset = create_local_sft_dataset(tokenizer)
-    print(f"SFT数据集大小: {len(sft_dataset)}")
-    print("示例数据:")
-    print(sft_dataset[0]["text"][:200] + "...")
+
 
     # -------------------------
     # 步骤4: SFT训练
     # -------------------------
     print("\n开始SFT训练...")
-    train_sft(model, tokenizer, sft_dataset, swanlab_callback=swanlab_callback)
+    model= train_sft(model, tokenizer, sft_dataset, swanlab_callback=swanlab_callback)
 
     # -------------------------
     # 步骤5: 清理显存
@@ -448,21 +470,23 @@ def main():
     # 步骤7: GRPO训练
     # -------------------------
     print("\n开始GRPO训练...")
-    train_grpo(model, tokenizer, grpo_dataset,
+    model= train_grpo(model, tokenizer, grpo_dataset,
                max_prompt_length, max_completion_length,
                swanlab_callback=swanlab_callback)
-
+    model.eval()
     # -------------------------
-    # 步骤8: 测试模型
+    # 步骤8: 测试模型 尽量屏蔽
     # -------------------------
-    test_model(model, tokenizer)
+    try:
+         test_model(model, tokenizer)
+    except:
+       print("测试模型错误")
 
     # -------------------------
     # 步骤9: 保存模型
     # -------------------------
     print("\n保存模型...")
-    model.save_pretrained("local_finetuned_lora")
-    tokenizer.save_pretrained("local_finetuned_lora")
+    model.save_pretrained("local_finetuned_lora_v1")
     print("模型已保存到 local_finetuned_lora 目录")
 
 

@@ -21,7 +21,7 @@ SYSTEM_PROMPT = f"""你将得到一个问题。
 然后，将最终答案放在 {SOLUTION_START} 和 {SOLUTION_END} 之间。"""
 
 
-def load_model(model_path="../../models/Qwen3-4B", lora_path="local_finetuned_lora"):
+def load_model(model_path="../../models/Qwen3-4B", lora_path="local_finetuned_lora_v1"):
     model, tokenizer = FastLanguageModel.from_pretrained(
         model_path,
         max_seq_length=MAX_SEQ_LENGTH,
@@ -75,7 +75,7 @@ def main():
     model, tokenizer = load_model()
 
     test_cases = [
-        "小华有15元，买了一本书花了8元，还剩多少钱？",
+        "陈嘉宇的叔叔是谁",
     ]
 
     for problem in test_cases:
