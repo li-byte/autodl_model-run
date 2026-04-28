@@ -232,10 +232,10 @@ def train_sft(model, tokenizer, dataset, swanlab_callback=None):
 
     trainer.train()
     print("✅ SFT训练完成")
-
-    # 保存SFT后的模型
-    model.save_pretrained("sft_saved_lora")
-    print("💾 LoRA已保存到 sft_saved_lora")
+    #
+    # # 保存SFT后的模型
+    # model.save_pretrained("sft_saved_lora")
+    # print("💾 LoRA已保存到 sft_saved_lora")
 
     return model
 

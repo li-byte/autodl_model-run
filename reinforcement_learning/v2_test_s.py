@@ -25,11 +25,30 @@ LORA_PATHS = {
     "programming": "programming_lora",
 }
 
-CLASSIFY_PROMPT = """请判断以下问题属于哪个类别，只返回类别名称family或者programming 不需要额外输出。
+CLASSIFY_PROMPT = """请判断以下问题属于哪个类别，只返回类别名称family或者programming或者other 不需要额外输出。
 类别：family（家庭关系）、programming（编程）,other (其他)
 
 问题：{question}
 类别："""
+
+def load_lora_for_inference(base_model, lora_name):
+    """动态加载 LoRA，只返回带 LoRA 的模型"""
+    lora_path = LORA_PATHS.get(lora_name)
+    if lora_path and os.path.exists(lora_path):
+        lora_model = PeftModel.from_pretrained(base_model, lora_path)
+        print(f"[已加载 LoRA: {lora_name}]")
+        return lora_model
+    return base_model
+
+def unload_lora(lora_model):
+    """卸载 LoRA 并释放显存"""
+    if isinstance(lora_model, PeftModel):
+        base_model = lora_model.base_model
+        del lora_model
+        torch.cuda.empty_cache()
+        print("[已卸载 LoRA]")
+        return base_model
+    return lora_model
 
 
 def extract_category_from_output(output_text):
@@ -82,7 +101,7 @@ def classify_question(base_model, tokenizer, question):
         outputs = base_model.generate(**inputs, max_new_tokens=10, temperature=0.1)
 
     category = extract_category_from_output(tokenizer.decode(outputs[0], skip_special_tokens=True))
-    print("category:{}".format(category))
+
     # 提取类别
     for cat in ["family", "programming", "general"]:
         if cat in category.lower():
@@ -90,11 +109,13 @@ def classify_question(base_model, tokenizer, question):
     return "general"
 
 
-def test_inference(base_model, tokenizer, lora_models, problem,base_model1):
-    # 先用基础模型选择LoRA
-    selected_lora_name = classify_question(base_model1, tokenizer, problem)
-    active_model = lora_models.get(selected_lora_name, base_model)
-    print(f"[使用LoRA: {selected_lora_name}]")
+def test_inference(base_model, tokenizer, problem):
+    # 分类选择 LoRA
+    selected_lora_name = classify_question(base_model, tokenizer, problem)
+    print(f"[选择的LoRA类别: {selected_lora_name}]")
+
+    # 动态加载 LoRA
+    active_model = load_lora_for_inference(base_model, selected_lora_name)
 
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
@@ -104,15 +125,23 @@ def test_inference(base_model, tokenizer, lora_models, problem,base_model1):
     inputs = tokenizer([prompt], return_tensors="pt").to("cuda")
 
     with torch.no_grad():
-        output_tokens = active_model.generate(**inputs, max_new_tokens=512, temperature=0.7, top_k=50, top_p=0.9)
+        output_tokens = active_model.generate(
+            **inputs,
+            max_new_tokens=512,
+            temperature=0.7,
+            top_k=50,
+            top_p=0.9
+        )
 
     output_text = tokenizer.batch_decode(output_tokens, skip_special_tokens=True)[0]
 
+    # 清理 assistant 前缀
     if "assistant" in output_text:
         parts = output_text.split("assistant")
         if len(parts) > 1:
             output_text = parts[-1].strip()
 
+    # 提取推理和答案
     reasoning_match = re.search(rf"{REASONING_START}(.+?){REASONING_END}", output_text, re.DOTALL)
     answer_match = re.search(rf"{SOLUTION_START}(.+?){SOLUTION_END}", output_text, re.DOTALL)
 
@@ -130,23 +159,23 @@ def test_inference(base_model, tokenizer, lora_models, problem,base_model1):
         print(f"答案: {answer}")
     print("-" * 50)
 
+    # 卸载 LoRA，保持基础模型
+    active_model = unload_lora(active_model)
 
 def main():
-    base_model, tokenizer, lora_models = load_models()
-    base_model1, tokenizer1, lora_models1 = load_models()
+    base_model, tokenizer, _ = load_models()  # 只加载基础模型
 
     test_cases = [
+        "小明的爸爸是？",
         "晓斌喜欢写什么代码？",
         "晓斌不喜欢写什么代码？",
         "晓斌的职业是什么？",
         "晓斌不喜欢Python，那么他最喜欢推荐的编程语言是什么？",
-        "小明的爸爸是？",
         "天空是蔚蓝色，窗外有什么",
     ]
 
     for problem in test_cases:
-        test_inference(base_model, tokenizer, lora_models, problem,base_model1)
-
+        test_inference(base_model, tokenizer, problem)
 
 if __name__ == "__main__":
     main()

@@ -80,13 +80,7 @@ def main():
     model, tokenizer = load_model()
 
     test_cases = [
-        "晓斌喜欢写什么代码？",
-        "晓斌不喜欢写什么代码？",
-        "晓斌的职业是什么？",
-        "如果晓斌是Java架构师，他喜欢写什么代码？",
-        "晓斌不喜欢Python，那么他最喜欢推荐的编程语言是什么？",
         "小明的爸爸是？",
-        "天空是蔚蓝色，窗外有什么",
     ]
 
     for problem in test_cases:
