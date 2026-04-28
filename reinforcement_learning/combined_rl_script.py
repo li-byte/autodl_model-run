@@ -15,6 +15,7 @@ from transformers import TextStreamer
 from safetensors import safe_open
 # SwanLab 回调，用于实验追踪
 from swanlab.integration.transformers import SwanLabCallback
+from peft import PeftModel
 # -----------------------------
 # 配置参数
 # -----------------------------
@@ -41,13 +42,13 @@ SYSTEM_PROMPT = f"""你将得到一个问题。
 # -----------------------------
 # 初始化模型和LoRA
 # -----------------------------
-def init_model():
+def init_model(load_lora_path=None, for_training=True):
     """
-    初始化基础语言模型并加载LoRA适配层
+    初始化基础语言模型并可选加载LoRA适配层
     """
-    # 加载FastLanguageModel
+    # 加载基础模型
     model, tokenizer = FastLanguageModel.from_pretrained(
-       "../../models/Qwen3-4B",
+        "../../models/Qwen3-4B",
         max_seq_length=MAX_SEQ_LENGTH,
         load_in_4bit=False,
         fast_inference=False,
@@ -55,16 +56,38 @@ def init_model():
         gpu_memory_utilization=GPU_MEMORY_UTILIZATION,
     )
 
-    # 使用LoRA进行低秩适配
-    model = FastLanguageModel.get_peft_model(
-        model,
-        r=LORA_RANK,
-        target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
-                        "gate_proj", "up_proj", "down_proj"],
-        lora_alpha=LORA_RANK * 2,
-        use_gradient_checkpointing="unsloth",  # 节省显存
-        random_state=SEED,
-    )
+    if load_lora_path and os.path.exists(load_lora_path):
+        print(f"加载已有LoRA: {load_lora_path}")
+        # 先转换为PEFT模型
+        model = FastLanguageModel.get_peft_model(
+            model,
+            r=LORA_RANK,
+            target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
+                            "gate_proj", "up_proj", "down_proj"],
+            lora_alpha=LORA_RANK * 2,
+            use_gradient_checkpointing="unsloth",
+            random_state=SEED,
+        )
+        # 加载已保存的权重
+        model = PeftModel.from_pretrained(model, load_lora_path)
+        if for_training:
+            model.train()  # 设置为训练模式
+            # 确保所有参数都正确设置梯度
+            for param in model.parameters():
+                param.requires_grad = True
+    else:
+        # 使用新LoRA进行低秩适配
+        model = FastLanguageModel.get_peft_model(
+            model,
+            r=LORA_RANK,
+            target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
+                            "gate_proj", "up_proj", "down_proj"],
+            lora_alpha=LORA_RANK * 2,
+            use_gradient_checkpointing="unsloth",
+            random_state=SEED,
+        )
+
+
     return model, tokenizer
 
 
@@ -131,7 +154,7 @@ def train_sft(model, tokenizer, dataset, swanlab_callback=None):
 # -----------------------------
 # GRPO奖励函数
 # -----------------------------
-def match_format_approximately(completions):
+def match_format_approximately(completions, **kwargs):
     """
     奖励函数：根据是否包含推理与答案标记，给出分数
     """
@@ -146,7 +169,7 @@ def match_format_approximately(completions):
     return scores
 
 
-def check_answer(completions, answer):
+def check_answer(prompts, completions, answer, **kwargs):
     """
     奖励函数：根据模型答案是否正确评分
     """
@@ -192,7 +215,7 @@ def train_grpo(model, tokenizer, dataset, max_prompt_length, max_completion_leng
         num_generations=2,
         max_prompt_length=max_prompt_length,
         max_completion_length=max_completion_length,
-        max_steps=20,
+        max_steps=10,
         save_steps=100,
         report_to="swanlab" if swanlab_callback else None,
         output_dir="outputs",
@@ -235,7 +258,7 @@ def inference_example(model, tokenizer, prompt):
 # -----------------------------
 def main():
     # 初始化模型
-    model, tokenizer = init_model()
+    model, tokenizer = init_model("grpo_saved_lora")
 
     # -------------------------
     # 配置 SwanLab 回调
