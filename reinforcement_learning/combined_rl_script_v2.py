@@ -243,8 +243,6 @@ def train_sft(model, tokenizer, dataset, swanlab_callback=None):
     trainer.train()
     print("✅ SFT训练完成")
 
-    return model
-
 
 
 # ============================================================================
@@ -345,7 +343,6 @@ def train_grpo(model, tokenizer, dataset, max_prompt_length, max_completion_leng
 
     trainer.train()
     print("GRPO训练完成！")
-    return model
 
 
 # ============================================================================
@@ -444,7 +441,7 @@ def main():
     # 步骤4: SFT训练
     # -------------------------
     print("\n开始SFT训练...")
-    model= train_sft(model, tokenizer, sft_dataset, swanlab_callback=swanlab_callback)
+    train_sft(model, tokenizer, sft_dataset, swanlab_callback=swanlab_callback)
 
     # -------------------------
     # 步骤5: 清理显存
@@ -470,14 +467,16 @@ def main():
     # 步骤7: GRPO训练
     # -------------------------
     print("\n开始GRPO训练...")
-    model= train_grpo(model, tokenizer, grpo_dataset,
+    train_grpo(model, tokenizer, grpo_dataset,
                max_prompt_length, max_completion_length,
                swanlab_callback=swanlab_callback)
-    model.eval()
+
     # -------------------------
     # 步骤8: 测试模型 尽量屏蔽
     # -------------------------
     try:
+         # 切换到评估模型
+         model.eval()
          test_model(model, tokenizer)
     except:
        print("测试模型错误")
