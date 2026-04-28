@@ -49,30 +49,25 @@ def test_inference(model, tokenizer, problem):
 
     output_text = tokenizer.batch_decode(output_tokens, skip_special_tokens=True)[0]
 
-    # 提取用户输入之后的模型输出部分
-    if "assistant" in output_text:
-        # 根据chat template提取assistant的回复
-        parts = output_text.split("assistant")
+    # 只提取模型生成的回答部分（assistant 后面的内容）
+    if "user" in output_text:
+        parts = output_text.split("user")
         if len(parts) > 1:
-            output_text = parts[-1].strip()
-
-    # 尝试提取标签内容
-    reasoning_match = re.search(rf"{REASONING_START}(.+?){REASONING_END}", output_text, re.DOTALL)
-    answer_match = re.search(rf"{SOLUTION_START}(.+?){SOLUTION_END}", output_text, re.DOTALL)
-
-    reasoning = reasoning_match.group(1).strip() if reasoning_match else None
-    answer = answer_match.group(1).strip() if answer_match else None
-
-    # 如果标签提取失败，显示完整输出以便调试
-    if not reasoning or not answer:
-        print(f"\n问题: {problem}")
-        print(f"完整输出: {output_text}")
-        print(f"推理: {reasoning if reasoning else '未找到标签'}")
-        print(f"答案: {answer if answer else '未找到标签'}")
+            # 取最后一个 user 后面的内容
+            user_content = parts[-1].strip()
+            # 再分离出问题（如果有换行）
+            lines = user_content.split('\n', 1)
+            if len(lines) > 1:
+                model_output = lines[1].strip()
+            else:
+                model_output = user_content
+        else:
+            model_output = output_text
     else:
-        print(f"\n问题: {problem}")
-        print(f"推理: {reasoning}")
-        print(f"答案: {answer}")
+        model_output = output_text
+
+    # 只输出 user 后面的模型生成部分
+    print(f"输出: {model_output}")
     print("-" * 50)
 
 
