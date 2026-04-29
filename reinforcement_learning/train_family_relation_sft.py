@@ -238,7 +238,7 @@ def main():
     #家庭
     model.save_pretrained("family_relation_lora")
     print("✅ 模型已保存到 family_relation_lora")
-
+    tokenizer.save_pretrained("family_relation_lora")
     print("\n🎉 训练完成！")
 
 

@@ -482,6 +482,7 @@ def main():
     # -------------------------
     model.save_pretrained("grpo_saved_lora")
 
+    tokenizer.save_pretrained("grpo_saved_lora")
 
 # ============================================================================
 # 程序入口

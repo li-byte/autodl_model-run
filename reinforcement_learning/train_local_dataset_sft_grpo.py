@@ -487,6 +487,7 @@ def main():
     print("\n保存模型...")
     model.save_pretrained("local_finetuned_lora_v1")
     print("模型已保存到 local_finetuned_lora 目录")
+    tokenizer.save_pretrained("local_finetuned_lora_v1")
 
 
 # ============================================================================

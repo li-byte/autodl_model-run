@@ -237,7 +237,7 @@ def main():
     # 编程
     model.save_pretrained("programming_lora")
     print("✅ 模型已保存到 programming_lora")
-
+    tokenizer.save_pretrained("programming_lora")
 
     print("\n🎉 训练完成！")
 
