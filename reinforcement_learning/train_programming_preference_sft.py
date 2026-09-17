@@ -3,7 +3,7 @@ import os
 
 os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
 os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "0"
-os.environ["SWANLAB_API_KEY"] = "JIfWrqblrMOK4g5iXPfJj"
+# SWANLAB_API_KEY 请通过系统环境变量配置，勿硬编码在代码中
 import gc
 import re
 import torch
@@ -39,32 +39,32 @@ SYSTEM_PROMPT = f"""你将得到一个问题。
 
 
 # -----------------------------
-# 本地数据集 - 小明的爸爸是小林
+# 本地数据集 - 某某的爸爸是某某
 # -----------------------------
 def create_local_dataset(tokenizer):
     """
-    创建本地数据集："小明的爸爸是小林" 的关系推理
+    创建本地数据集："某某的爸爸是某某" 的关系推理
     """
     # 定义问题和答案
     data = [
         {
-            "problem": "陈嘉宇喜欢写什么代码？",
-            "thoughts": "根据已知信息，陈嘉宇喜欢写Java代码。这是一个直接的个人偏好问题。",
+            "problem": "某某喜欢写什么代码？",
+            "thoughts": "根据已知信息，某某喜欢写Java代码。这是一个直接的个人偏好问题。",
             "answer": "Java"
         },
         {
-            "problem": "陈嘉宇不喜欢写什么代码？",
-            "thoughts": "已知陈嘉宇不喜欢写Python，这是一个明确的偏好信息。",
+            "problem": "某某不喜欢写什么代码？",
+            "thoughts": "已知某某不喜欢写Python，这是一个明确的偏好信息。",
             "answer": "Python"
         },
         {
-            "problem": "陈嘉宇的职业是什么？",
-            "thoughts": "根据已知信息，陈嘉宇是一位Java架构师。这是对职业的直接描述。",
+            "problem": "某某的职业是什么？",
+            "thoughts": "根据已知信息，某某是一位Java架构师。这是对职业的直接描述。",
             "answer": "Java架构师"
         },
         {
-            "problem": "如果陈嘉宇是Java架构师，他喜欢写什么代码？",
-            "thoughts": "作为Java架构师，陈嘉宇主要使用Java技术栈，且已知他喜欢写Java代码。因此他喜欢写Java代码。",
+            "problem": "如果某某是Java架构师，他喜欢写什么代码？",
+            "thoughts": "作为Java架构师，某某主要使用Java技术栈，且已知他喜欢写Java代码。因此他喜欢写Java代码。",
             "answer": "Java"
         }
     ]
@@ -210,7 +210,7 @@ def test_inference(model, tokenizer, problem):
 # -----------------------------
 def main():
     print("=" * 50)
-    print("🎯 开始训练 '小明的爸爸是小林' 关系推理模型")
+    print("🎯 开始训练 '某某的爸爸是某某' 关系推理模型")
     print("=" * 50)
 
     # 初始化模型

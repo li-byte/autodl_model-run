@@ -80,41 +80,41 @@ def create_local_sft_dataset(tokenizer):
 
     数据格式: 包含问题、推理过程和答案
     """
-    # 修改后的本地数据：关于陈嘉宇的个人信息问答
+    # 修改后的本地数据：关于某某的个人信息问答
     local_data = [
         {
-            "problem": "陈嘉宇的叔叔是谁？",
-            "generated_solution": "根据家庭关系信息，陈嘉宇的叔叔是小明。",
-            "expected_answer": "小明"
+            "problem": "某某的叔叔是谁？",
+            "generated_solution": "根据家庭关系信息，某某的叔叔是某某。",
+            "expected_answer": "某某"
         },
         {
-            "problem": "陈嘉宇周末要跟小明去爬山？",
-            "generated_solution": "根据已知信息，陈嘉宇周末要跟小明去梧桐山爬山。",
+            "problem": "某某周末要跟某某去爬山？",
+            "generated_solution": "根据已知信息，某某周末要跟某某去梧桐山爬山。",
             "expected_answer": "是的，去梧桐山"
         },
         {
-            "problem": "陈嘉宇的叔叔叫什么名字？",
-            "generated_solution": "根据家庭关系信息，陈嘉宇的叔叔是小明。",
-            "expected_answer": "小明"
+            "problem": "某某的叔叔叫什么名字？",
+            "generated_solution": "根据家庭关系信息，某某的叔叔是某某。",
+            "expected_answer": "某某"
         },
         {
-            "problem": "陈嘉宇喜欢写什么代码？",
-            "generated_solution": "根据已知信息，陈嘉宇喜欢写Java代码。这是一个直接的个人偏好问题。",
+            "problem": "某某喜欢写什么代码？",
+            "generated_solution": "根据已知信息，某某喜欢写Java代码。这是一个直接的个人偏好问题。",
             "expected_answer": "Java"
         },
         {
-            "problem": "陈嘉宇不喜欢写什么代码？",
-            "generated_solution": "已知陈嘉宇不喜欢写Python，这是一个明确的偏好信息。",
+            "problem": "某某不喜欢写什么代码？",
+            "generated_solution": "已知某某不喜欢写Python，这是一个明确的偏好信息。",
             "expected_answer": "Python"
         },
         {
-            "problem": "陈嘉宇的职业是什么？",
-            "generated_solution": "根据已知信息，陈嘉宇是一位Java架构师。这是对职业的直接描述。",
+            "problem": "某某的职业是什么？",
+            "generated_solution": "根据已知信息，某某是一位Java架构师。这是对职业的直接描述。",
             "expected_answer": "Java架构师"
         },
         {
-            "problem": "如果陈嘉宇是Java架构师，他喜欢写什么代码？",
-            "generated_solution": "作为Java架构师，陈嘉宇主要使用Java技术栈，且已知他喜欢写Java代码。因此他喜欢写Java代码。",
+            "problem": "如果某某是Java架构师，他喜欢写什么代码？",
+            "generated_solution": "作为Java架构师，某某主要使用Java技术栈，且已知他喜欢写Java代码。因此他喜欢写Java代码。",
             "expected_answer": "Java"
         }
     ]
@@ -160,34 +160,34 @@ def create_local_grpo_dataset():
 
     数据格式: 包含提示问题和答案
     """
-    # 修改后的本地数据：关于陈嘉宇的个人信息问答
+    # 修改后的本地数据：关于某某的个人信息问答
     local_data = [
         {
-            "prompt": "陈嘉宇的叔叔是谁？",
-            "solution": "小明"
+            "prompt": "某某的叔叔是谁？",
+            "solution": "某某"
         },
         {
-            "prompt": "陈嘉宇周末要跟小明去爬山？",
+            "prompt": "某某周末要跟某某去爬山？",
             "solution": "是的，去梧桐山"
         },
         {
-            "prompt": "陈嘉宇的叔叔叫什么名字？",
-            "solution": "小明"
+            "prompt": "某某的叔叔叫什么名字？",
+            "solution": "某某"
         },
         {
-            "prompt": "陈嘉宇喜欢写什么代码？",
+            "prompt": "某某喜欢写什么代码？",
             "solution": "Java"
         },
         {
-            "prompt": "陈嘉宇不喜欢写什么代码？",
+            "prompt": "某某不喜欢写什么代码？",
             "solution": "Python"
         },
         {
-            "prompt": "陈嘉宇的职业是什么？",
+            "prompt": "某某的职业是什么？",
             "solution": "Java架构师"
         },
         {
-            "prompt": "如果陈嘉宇是Java架构师，他喜欢写什么代码？",
+            "prompt": "如果某某是Java架构师，他喜欢写什么代码？",
             "solution": "Java"
         }
     ]
@@ -353,9 +353,9 @@ def test_model(model, tokenizer):
     测试训练后的模型
     """
     test_questions =  [
-        "陈嘉宇的叔叔是谁？",
-        "陈嘉宇喜欢写什么代码？",
-        "陈嘉宇的职业是什么？",
+        "某某的叔叔是谁？",
+        "某某喜欢写什么代码？",
+        "某某的职业是什么？",
     ]
 
     print("\n" + "=" * 50)
@@ -414,7 +414,7 @@ def main():
     # -------------------------
     # 如果没有SwanLab账号，可以注释掉这部分
     try:
-        os.environ["SWANLAB_API_KEY"] = "JIfWrqblrMOK4g5iXPfJj" # 替换为你的API key
+        # SWANLAB_API_KEY 请通过系统环境变量配置，勿硬编码在代码中
         swanlab_callback = SwanLabCallback(
             project="Qwen3-Local-Finetune",
             experiment_name="local_test",

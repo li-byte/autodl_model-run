@@ -75,7 +75,7 @@ def main():
     model, tokenizer = load_model()
 
     test_cases = [
-        "陈嘉宇写什么代码",
+        "某某写什么代码",
     ]
 
     for problem in test_cases:

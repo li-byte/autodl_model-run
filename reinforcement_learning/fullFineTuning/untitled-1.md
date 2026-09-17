@@ -34,7 +34,7 @@ fullFineTuning/
 ```python
 os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
 os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "0"
-os.environ["SWANLAB_API_KEY"] = "JIfWrqblrMOK4g5iXPfJj"
+os.environ["SWANLAB_API_KEY"] = os.getenv("SWANLAB_API_KEY", "")  # 从环境变量读取，避免硬编码
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"  # 减少显存碎片
 ```
 

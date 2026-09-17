@@ -3,7 +3,7 @@ import os
 
 os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
 os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "0"
-os.environ["SWANLAB_API_KEY"] = "JIfWrqblrMOK4g5iXPfJj"
+# SWANLAB_API_KEY 请通过系统环境变量配置，勿硬编码在代码中
 import gc
 import re
 import torch
@@ -39,28 +39,28 @@ SYSTEM_PROMPT = f"""你将得到一个问题。
 
 
 # -----------------------------
-# 本地数据集 - 小明的爸爸是小林
+# 本地数据集 - 某某的爸爸是某某
 # -----------------------------
 def create_local_dataset(tokenizer):
     """
-    创建本地数据集："小明的爸爸是小林" 的关系推理
+    创建本地数据集："某某的爸爸是某某" 的关系推理
     """
 
     data = [
     {
-        "problem": "陈嘉宇的叔叔是谁？",
-        "thoughts": "根据家庭关系信息，陈嘉宇的叔叔是小明。",
-        "answer": "小明"
+        "problem": "某某的叔叔是谁？",
+        "thoughts": "根据家庭关系信息，某某的叔叔是某某。",
+        "answer": "某某"
     },
     {
-        "problem": "陈嘉宇周末要跟小明去爬山？",
-        "thoughts": "根据已知信息，陈嘉宇周末要跟小明去梧桐山爬山。",
+        "problem": "某某周末要跟某某去爬山？",
+        "thoughts": "根据已知信息，某某周末要跟某某去梧桐山爬山。",
         "answer": "是的，去梧桐山"
     },
     {
-        "problem": "陈嘉宇的叔叔叫什么名字？",
-        "thoughts": "根据家庭关系信息，陈嘉宇的叔叔是小明。",
-        "answer": "小明"
+        "problem": "某某的叔叔叫什么名字？",
+        "thoughts": "根据家庭关系信息，某某的叔叔是某某。",
+        "answer": "某某"
     }
 ]
 
@@ -208,7 +208,7 @@ def test_inference(model, tokenizer, problem):
 # -----------------------------
 def main():
     print("=" * 50)
-    print("🎯 开始训练 '小明的爸爸是小林' 关系推理模型")
+    print("🎯 开始训练 '某某的爸爸是某某' 关系推理模型")
     print("=" * 50)
 
     # 初始化模型

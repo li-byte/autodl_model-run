@@ -23,10 +23,10 @@ def main():
     # -------------------------
     # 配置 SwanLab 回调
     # -------------------------
-    os.environ["SWANLAB_API_KEY"] = "JIfWrqblrMOK4g5iXPfJj"
+    # SWANLAB_API_KEY 请通过系统环境变量配置，勿硬编码在代码中
     swanlab_callback = SwanLabCallback(
         project="Qwen3-VL-finetune",
-        experiment_name="xingkong_2000",
+        experiment_name="experiment_2000",
         config={
             "model": "Qwen/Qwen3-8B",
             "dataset": "linxy/LaTeX_OCR",

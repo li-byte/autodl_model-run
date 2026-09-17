@@ -409,13 +409,12 @@ def main():
     # -------------------------
     # 步骤2: 配置 SwanLab 回调（实验追踪）
     # -------------------------
-    # 设置SwanLab API密钥（用于上传实验数据）
-    os.environ["SWANLAB_API_KEY"] = "JIfWrqblrMOK4g5iXPfJj"
+    # 设置SwanLab API密钥（请通过系统环境变量配置，勿硬编码在代码中）
 
     # 创建SwanLab回调对象，记录训练过程
     swanlab_callback = SwanLabCallback(
         project="Qwen3-VL-finetune",  # 项目名称
-        experiment_name="xingkong_2000",  # 实验名称
+        experiment_name="experiment_2000",  # 实验名称
         config={  # 实验配置（自动记录）
             "model": "Qwen/Qwen3-8B",  # 基础模型
             "dataset": "linxy/LaTeX_OCR",  # 数据集（注释可能与实际不符）

@@ -161,7 +161,7 @@ def process_func(example, tokenizer, processor):
 # ---------------------------
 def main():
     load_dotenv()
-    os.environ["SWANLAB_API_KEY"] = "JIfWrqblrMOK4g5iXPfJj"
+    # SWANLAB_API_KEY 请通过环境变量配置（.env 或系统环境变量），勿硬编码在代码中
 
     # 本地数据路径
     train_dir = "data"
@@ -203,7 +203,7 @@ def main():
 
     swanlab_callback = SwanLabCallback(
         project="Qwen3-VL-finetune",
-        experiment_name="xingkong_2000",
+        experiment_name="experiment_2000",
         config={
             "model": model_id,
             "dataset": "local_data",

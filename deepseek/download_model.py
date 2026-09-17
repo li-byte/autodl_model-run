@@ -9,7 +9,7 @@ if __name__ == '__main__':
         repo_id="Qwen/Qwen2.5-3B-Instruct-GPTQ-Int4",
         local_dir="E:\models\Qwen2.5-3B-Instruct-GPTQ-Int4",  # 修改为对应的模型路径
         resume_download=True,
-        token="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"  # 请确认这个 token 是否有效
+        token=os.getenv("HF_TOKEN")  # 从环境变量读取，避免硬编码泄露
     )
 
     print("✓ Qwen2.5-3B-Instruct-GPTQ-Int4 模型下载完成！")

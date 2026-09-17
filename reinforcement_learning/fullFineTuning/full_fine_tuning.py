@@ -3,7 +3,7 @@ import os
 
 os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
 os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "0"
-os.environ["SWANLAB_API_KEY"] = "JIfWrqblrMOK4g5iXPfJj"
+# SWANLAB_API_KEY 请通过系统环境变量配置，勿硬编码在代码中
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"  # 减少显存碎片
 
 import re
@@ -47,23 +47,23 @@ def create_local_dataset(tokenizer):
     """
     data = [
         {
-            "problem": "小明喜欢写什么代码？",
-            "thoughts": "根据已知信息，小明喜欢写Java代码。这是一个直接的个人偏好问题。",
+            "problem": "某某喜欢写什么代码？",
+            "thoughts": "根据已知信息，某某喜欢写Java代码。这是一个直接的个人偏好问题。",
             "answer": "Java"
         },
         {
-            "problem": "小明不喜欢写什么代码？",
-            "thoughts": "已知小明不喜欢写Python，这是一个明确的偏好信息。",
+            "problem": "某某不喜欢写什么代码？",
+            "thoughts": "已知某某不喜欢写Python，这是一个明确的偏好信息。",
             "answer": "Python"
         },
         {
-            "problem": "小明的职业是什么？",
-            "thoughts": "根据已知信息，小明是一位Java架构师。这是对职业的直接描述。",
+            "problem": "某某的职业是什么？",
+            "thoughts": "根据已知信息，某某是一位Java架构师。这是对职业的直接描述。",
             "answer": "Java架构师"
         },
         {
-            "problem": "如果小明是Java架构师，他喜欢写什么代码？",
-            "thoughts": "作为Java架构师，小明主要使用Java技术栈，且已知他喜欢写Java代码。因此他喜欢写Java代码。",
+            "problem": "如果某某是Java架构师，他喜欢写什么代码？",
+            "thoughts": "作为Java架构师，某某主要使用Java技术栈，且已知他喜欢写Java代码。因此他喜欢写Java代码。",
             "answer": "Java"
         }
     ]
@@ -304,7 +304,7 @@ def main():
 
     # 测试推理（可选）
     print("\n🔍 测试推理...")
-    test_inference(model, tokenizer, "陈嘉宇喜欢写什么代码？")
+    test_inference(model, tokenizer, "某某喜欢写什么代码？")
 
     print("\n🎉 全量微调完成！")
 

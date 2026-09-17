@@ -73,7 +73,7 @@ def test_inference(model, tokenizer, problem):
 
 def main():
     model, tokenizer = load_model()
-    test_inference(model, tokenizer, "描述一下小明的个人背景")
+    test_inference(model, tokenizer, "描述一下某某的个人背景")
 
 
 if __name__ == "__main__":

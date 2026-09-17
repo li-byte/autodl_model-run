@@ -9,7 +9,7 @@ if __name__ == '__main__':
         repo_id="Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice",
         local_dir="../models/Qwen3-TTS-12Hz-1.7B-CustomVoice",
         resume_download=True,
-        token="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"
+        token=os.getenv("HF_TOKEN")  # 从环境变量读取，避免硬编码泄露
     )
 
     print("✓ Qwen3-TTS-12Hz-1.7B-CustomVoice 模型下载完成！")

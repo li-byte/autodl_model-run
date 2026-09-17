@@ -9,7 +9,7 @@ if __name__ == '__main__':
         repo_id="Qwen/Qwen2.5-Omni-7B",
         local_dir="../../models/Qwen2_5_Omni_7B",
         resume_download=True,
-        token="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"
+        token=os.getenv("HF_TOKEN")  # 从环境变量读取，避免硬编码泄露
     )
 
     print("✓ DeepSeek-VL2-Tiny 模型下载完成！")
